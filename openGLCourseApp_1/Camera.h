@@ -14,6 +14,8 @@ public:
 	
 	void keyControl(bool* keys, GLfloat deltaTime);
 	void mouseControl(GLfloat xChange, GLfloat yChange);
+
+	glm::vec3 getCameraPosition();
 	
 	glm::mat4 calculateViewMatrix();
 	
@@ -25,6 +27,10 @@ private:
 	glm::vec3 up;
 	glm::vec3 right;
 	glm::vec3 worldUp;
+
+	glm::vec2 smoothedDelta;
+	GLfloat smoothingFactor;
+
 
 	GLfloat yaw;
 	GLfloat pitch;

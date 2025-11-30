@@ -33,13 +33,17 @@ void Mesh::CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int num
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * numOfIndices, indices, GL_STATIC_DRAW);
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * numOfVertices, vertices, GL_STATIC_DRAW);	// Copies the data from vertices into the currently bound buffer on the GPU
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);	// explains to the GPU how to interpret the raw pile of numbers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, 0);	// explains to the GPU how to interpret the raw pile of numbers
 	glEnableVertexAttribArray(0);		// Enables the attribute index 0, turning on the switch for glVertexAttribPointer to work
-	glBindBuffer(GL_ARRAY_BUFFER, 0);	// Unbinds the VBO, 0 means No Object, unplug
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, (void *)(sizeof(vertices[0]) * 3));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, (void*)(sizeof(vertices[0]) * 5));
+	glEnableVertexAttribArray(2);
 
-	glBindVertexArray(0);	// Unbinds the VAO, close file essentially
+	glBindBuffer(GL_ARRAY_BUFFER, 0);	// Unbinds the VBO, 0 means No Object, unplug
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+	glBindVertexArray(0);	// Unbinds the VAO, close file essentially
 
 
 }
@@ -47,7 +51,6 @@ void Mesh::CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int num
 void Mesh::RenderMesh() {
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);

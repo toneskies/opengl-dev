@@ -1,10 +1,13 @@
 #include "Camera.h"
 
 Camera::Camera() {
-
+	smoothingFactor = 0.1f;
+	smoothedDelta = glm::vec2(0.0f);
 }
 
 Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch, GLfloat startMoveSpeed, GLfloat startTurnSpeed) {
+	smoothingFactor = 0.1f;
+	smoothedDelta = glm::vec2(0.0f);
 	position = startPosition;
 	worldUp = startUp;
 	yaw = startYaw;
@@ -35,23 +38,23 @@ void Camera::keyControl(bool* keys, GLfloat deltaTime) {
 
 }
 
-void Camera::mouseControl(GLfloat xChange, GLfloat yChange) {
-	xChange *= turnSpeed;
-	yChange *= turnSpeed;
+void Camera::mouseControl(GLfloat xChange, GLfloat yChange)
+{
+	// Raw delta (invert Y for FPS mouse-look)
+	glm::vec2 rawDelta(xChange, -yChange);
 
-	yaw += xChange;
-	pitch += yChange;
+	// Exponential smoothing (LERP)
+	smoothedDelta = smoothedDelta + smoothingFactor * (rawDelta - smoothedDelta);
 
-	if (pitch > 89.0f) {
-		pitch = 89.0f;
-	}
+	// Apply sensitivity
+	yaw += smoothedDelta.x * turnSpeed;
+	pitch += smoothedDelta.y * turnSpeed;
 
-	if (pitch < 89.0f) {
-		pitch = -89.0f;
-	}
+	// Pitch clamp
+	if (pitch > 89.0f) pitch = 89.0f;
+	if (pitch < -89.0f) pitch = -89.0f;
 
 	update();
-
 }
 
 
@@ -59,6 +62,10 @@ glm::mat4 Camera::calculateViewMatrix() {
 	return glm::lookAt(position, position + front, up);
 }
 
+glm::vec3 Camera::getCameraPosition()
+{
+	return position;
+}
 
 void Camera::update() {
 	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
