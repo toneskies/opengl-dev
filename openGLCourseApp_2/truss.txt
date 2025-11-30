@@ -1,0 +1,19 @@
+# Simple Pyramid Truss
+# Vertices (x y z)
+v -1.0 0.0 1.0
+v 1.0 0.0 1.0
+v 1.0 0.0 -1.0
+v -1.0 0.0 -1.0
+v 0.0 1.5 0.0
+
+# Base Lines (connect indices)
+l 0 1
+l 1 2
+l 2 3
+l 3 0
+
+# Side Lines (connect base to peak index 4)
+l 0 4
+l 1 4
+l 2 4
+l 3 4
